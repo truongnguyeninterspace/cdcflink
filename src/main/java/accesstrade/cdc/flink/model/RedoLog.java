@@ -13,7 +13,7 @@ import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonNode;
  *
  * @author Truong
  */
-public class RedoLog {
+public class RedoLog extends JsonLog{
 
     private JsonNode schema;
     private JsonNode payload;

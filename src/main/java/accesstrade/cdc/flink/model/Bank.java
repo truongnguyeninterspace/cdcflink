@@ -9,6 +9,7 @@ package accesstrade.cdc.flink.model;
 import java.io.Serializable;
 
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.annotation.Id;
 
 /**
  * purpose of the class
@@ -16,24 +17,26 @@ import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.annotation.JsonPro
  * @author Truong
  */
 public class Bank implements Serializable {
- @JsonProperty("BANK_ID")
+
+    @JsonProperty("BANK_ID")
+    @Id
     private String bankId;
- @JsonProperty("BANK_NAME")
+    @JsonProperty("BANK_NAME")
     private String name;
- @JsonProperty("DESCRIPTION")
+    @JsonProperty("DESCRIPTION")
     private String description;
- @JsonProperty("CREATED_ON")
+    @JsonProperty("CREATED_ON")
     private String createOn;
- @JsonProperty("UPDATED_ON")
+    @JsonProperty("UPDATED_ON")
     private String updateOn;
- @JsonProperty("COUNTRY_CODE")
+    @JsonProperty("COUNTRY_CODE")
     private String countryCode;
 
     public Bank() {
     }
 
-    public Bank(String bankId, String name, String description,
-            String createOn, String updateOn, String countryCode) {
+    public Bank(String bankId, String name, String description, String createOn,
+            String updateOn, String countryCode) {
         this.bankId = bankId;
         this.name = name;
         this.description = description;

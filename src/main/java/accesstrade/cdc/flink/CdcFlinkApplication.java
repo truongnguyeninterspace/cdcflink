@@ -10,7 +10,7 @@ public class CdcFlinkApplication {
     public static void main(String[] args) {
         ApplicationContext applicationContext = SpringApplication.run(
                 CdcFlinkApplication.class, args);
-             PipelineInit pipelineInit = new PipelineInit(applicationContext);
+        PipelineInit pipelineInit = applicationContext.getBean(PipelineInit.class);
         pipelineInit.init();
     }
 

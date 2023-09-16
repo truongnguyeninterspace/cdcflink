@@ -6,8 +6,11 @@
  */
 package accesstrade.cdc.flink.map;
 
+import accesstrade.cdc.flink.model.JsonLog;
 import accesstrade.cdc.flink.model.RedoLog;
 import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.functions.RichMapFunction;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonNode;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -16,7 +19,17 @@ import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.node.Obje
  *
  * @author Truong
  */
-public class JsonMap implements MapFunction<ObjectNode, RedoLog> {
+public class JsonMap extends RichMapFunction<ObjectNode, JsonLog> {
+
+    @Override
+    public void open(Configuration parameters) throws Exception {
+        super.open(parameters);
+    }
+
+    @Override
+    public void close() throws Exception {
+        super.close();
+    }
 
     @Override
     public RedoLog map(ObjectNode objectNode) throws Exception {

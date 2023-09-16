@@ -1,0 +1,98 @@
+version: '3'
+services:
+  dbz_oracle21:
+      image: container-registry.oracle.com/database/enterprise:21.3.0.0
+      container_name: dbz_oracle21
+      ports:
+        - 1521:1521
+      environment:
+        - ORACLE_SID=ORCLCDB 
+        - ORACLE_PDB=ORCLPDB1 
+        - ORACLE_PWD=oraclepw 
+        - ENABLE_ARCHIVELOG=true 
+      networks:
+        - ui-network
+  zookeeper:
+      image: confluentinc/cp-zookeeper:latest
+      container_name: zookeeper
+      environment:
+        - ZOOKEEPER_CLIENT_PORT=2181
+        - ZOOKEEPER_TICK_TIME=2000
+      ports:
+        - 2181:2181
+      networks:
+        - ui-network
+  kafka:
+    container_name: kafka
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_HEAP_OPTS: -Xmx256M -Xms256M
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - ui-network
+
+  connect:
+    container_name: connect
+    image: debezium/connect:2.3.3.Final
+    ports:
+      - 8083:8083
+    depends_on:
+      - kafka
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+      - ENABLE_DEBEZIUM_KC_REST_EXTENSION=true
+      - ENABLE_DEBEZIUM_SCRIPTING=true
+      - CONNECT_REST_EXTENSION_CLASSES=io.debezium.kcrestextension.DebeziumConnectRestExtension
+    volumes:
+      - D:\Project\EventSourcing\VM\ojdbc11.jar:/kafka/libs/ojdbc11.jar
+    networks:
+      - ui-network
+
+  debezium-ui:
+    container_name: debezium-ui
+    image: debezium/debezium-ui
+    ports:
+      - 8088:8080
+    environment:
+      - KAFKA_CONNECT_URIS=http://connect:8083
+    depends_on:
+      - connect
+    networks:
+      - ui-network
+
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+    depends_on:
+      - mongo
+networks:
+  ui-network:
+    external: false
+
+

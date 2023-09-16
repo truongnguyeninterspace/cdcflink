@@ -1,23 +1,20 @@
 /**
- * Copyright © 2022 Interspace Co., Ltd. All rights reserved.
+ * Copyright © 2023 Interspace Co., Ltd. All rights reserved.
  *
  * Licensed under the Interspace's License,
  * you may not use this file except in compliance with the License.
  */
 package accesstrade.cdc.flink.model;
 
+import java.io.Serializable;
+
 /**
  * purpose of the class
  *
  * @author Truong
  */
-public enum Operation {
-    CREATE("c"),
-    DELETE("d"),
-    UPDATE("u");
+public abstract class JsonLog implements Serializable {
 
-    Operation(String value) {
-        this.value = value;
+    public JsonLog() {
     }
-    private String value;
 }
